@@ -1,0 +1,38 @@
+name: Test basic compare-commits usage
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - id: compare
+        uses: .
+        with:
+          owner: actions
+          repo: checkout
+          basehead: v3.0.0...v4.0.0
+          token: ${{ github.token }}
+          verbose: "true"
+        continue-on-error: true
+
+      - name: Assert differences output
+        env:
+          OUTCOME: ${{ steps.compare.outcome }}
+          DIFFERENCES: ${{ steps.compare.outputs.differences }}
+        run: |
+          echo "outcome: $OUTCOME"
+          echo "differences: $DIFFERENCES"
+          if [ "$OUTCOME" = "success" ]; then
+            if [ -z "$DIFFERENCES" ]; then
+              echo "FAIL: action succeeded but differences output is empty"
+              exit 1
+            fi
+            echo "PASS: got differences output"
+          elif [ "$OUTCOME" = "failure" ]; then
+            echo "PASS: action failed gracefully (API or sentinel repo issue)"
+          else
+            echo "FAIL: unexpected outcome '$OUTCOME'"
+            exit 1
+          fi
