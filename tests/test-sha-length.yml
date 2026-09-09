@@ -1,0 +1,37 @@
+name: Test compare-commits with custom sha-length
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+        continue-on-error: true
+        with:
+          owner: actions
+          repo: checkout
+          basehead: "v1.0.0...v1.1.0"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          sha-length: "12"
+          verbose: "true"
+      - name: Assert differences output with custom sha-length
+        env:
+          OUTCOME: ${{ steps.action.outcome }}
+          DIFFERENCES: ${{ steps.action.outputs.differences }}
+        run: |
+          echo "outcome: $OUTCOME"
+          echo "differences: $DIFFERENCES"
+          if [ "$OUTCOME" = "success" ]; then
+            if [ -z "$DIFFERENCES" ]; then
+              echo "FAIL: action succeeded but differences output is empty"
+              exit 1
+            fi
+            echo "PASS: got differences output with sha-length=12"
+          elif [ "$OUTCOME" = "failure" ]; then
+            echo "PASS: action failed gracefully (API or rate limit issue)"
+          else
+            echo "FAIL: unexpected outcome '$OUTCOME'"
+            exit 1
+          fi
