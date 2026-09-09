@@ -9,6 +9,7 @@ Hardened by [Chainguard](https://www.chainguard.dev) from the upstream action at
 | Version | Tag | Upstream commit |
 |---------|-----|-----------------|
 | v5.0.10 | [`v5.0.10`](https://github.com/chainguard-actions/cpcloud-compare-commits-action/tree/v5.0.10) | [`2ab0d2a`](https://github.com/cpcloud/compare-commits-action/commit/2ab0d2acc6c5c58840da6bc522ae87b3e3ccf6af) |
+| v5.0.28 | [`v5.0.28`](https://github.com/chainguard-actions/cpcloud-compare-commits-action/tree/v5.0.28) | [`2dce7af`](https://github.com/cpcloud/compare-commits-action/commit/2dce7af01600860922eda90208afc81bd87b9d98) |
 
 ## Privacy
 
