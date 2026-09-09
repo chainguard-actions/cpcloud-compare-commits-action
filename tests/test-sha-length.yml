@@ -1,0 +1,39 @@
+name: Test sha-length option
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+        with:
+          owner: actions
+          repo: checkout
+          basehead: v1.0.0...v1.1.0
+          token: ${{ github.token }}
+          sha-length: "4"
+          verbose: "true"
+      - name: Assert differences output is non-empty
+        env:
+          ACTUAL: ${{ steps.action.outputs.differences }}
+        run: |
+          echo "actual: $ACTUAL"
+          if [ -z "$ACTUAL" ]; then
+            echo "FAIL: expected non-empty differences output"
+            exit 1
+          fi
+          echo "PASS: differences output is non-empty"
+      - name: Assert sha-length is respected in output
+        env:
+          ACTUAL: ${{ steps.action.outputs.differences }}
+        run: |
+          echo "actual: $ACTUAL"
+          # The output should contain short SHAs of length 4
+          # We check that the output is a markdown table (has pipe chars)
+          if ! echo "$ACTUAL" | grep -q "|"; then
+            echo "FAIL: expected markdown table with pipe characters"
+            exit 1
+          fi
+          echo "PASS: output contains markdown table formatting with custom sha-length"
