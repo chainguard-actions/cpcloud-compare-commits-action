@@ -1,0 +1,38 @@
+name: Test error handling with invalid repository
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - id: action
+        uses: .
+        continue-on-error: true
+        with:
+          owner: this-owner-does-not-exist-xyz-abc-123
+          repo: this-repo-does-not-exist-xyz-abc-123
+          basehead: abc123...def456
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Assert action failed gracefully on invalid repo
+        env:
+          OUTCOME: ${{ steps.action.outcome }}
+          DIFFERENCES: ${{ steps.action.outputs.differences }}
+        run: |
+          echo "outcome: $OUTCOME"
+          echo "differences: $DIFFERENCES"
+          if [ "$OUTCOME" = "failure" ]; then
+            echo "PASS: action failed gracefully as expected for invalid repo"
+          elif [ "$OUTCOME" = "success" ]; then
+            if [ -z "$DIFFERENCES" ]; then
+              echo "PASS: action succeeded but returned empty differences (unexpected but acceptable)"
+            else
+              echo "FAIL: action unexpectedly succeeded with differences for a nonexistent repo"
+              exit 1
+            fi
+          else
+            echo "FAIL: unexpected outcome '$OUTCOME'"
+            exit 1
+          fi

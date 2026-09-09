@@ -1,0 +1,81 @@
+{
+  "name": "compare-commits-action",
+  "version": "5.0.26",
+  "private": true,
+  "description": "Compare the differences between two commits",
+  "main": "lib/main.js",
+  "scripts": {
+    "build": "tsc",
+    "format": "prettier --write .",
+    "format-check": "prettier --check .",
+    "lint": "eslint .",
+    "package": "ncc build --no-source-map-register --license licenses.txt --target es2019",
+    "all": "npm run build && npm run format-check && npm run lint && npm run package"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cpcloud/compare-commits-action.git"
+  },
+  "keywords": [
+    "actions",
+    "node",
+    "setup",
+    "git",
+    "github",
+    "commits",
+    "octokit"
+  ],
+  "author": "Phillip Cloud <417981+cpcloud@users.noreply.github.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@actions/core": "1.10.0",
+    "@octokit/rest": "19.0.7",
+    "markdown-table": "3.0.3",
+    "tunnel": "0.0.6"
+  },
+  "devDependencies": {
+    "@semantic-release/changelog": "6.0.2",
+    "@semantic-release/commit-analyzer": "9.0.2",
+    "@semantic-release/git": "10.0.1",
+    "@semantic-release/npm": "9.0.2",
+    "@semantic-release/release-notes-generator": "10.0.3",
+    "@types/eslint": "8.4.10",
+    "@types/node": "18.11.18",
+    "@typescript-eslint/eslint-plugin": "5.48.2",
+    "@typescript-eslint/parser": "5.48.2",
+    "@vercel/ncc": "0.36.0",
+    "eslint": "8.32.0",
+    "eslint-plugin-github": "4.6.0",
+    "js-yaml": "4.1.0",
+    "prettier": "2.8.3",
+    "semantic-release": "19.0.5",
+    "typescript": "4.9.4"
+  },
+  "release": {
+    "branches": [
+      "main"
+    ],
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      "@semantic-release/changelog",
+      [
+        "@semantic-release/github",
+        {
+          "successComment": false
+        }
+      ],
+      [
+        "@semantic-release/git",
+        {
+          "assets": [
+            "dist/*",
+            "package.json",
+            "package-lock.json",
+            "CHANGELOG.md"
+          ]
+        }
+      ]
+    ]
+  }
+}
