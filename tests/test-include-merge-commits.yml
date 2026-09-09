@@ -1,0 +1,26 @@
+name: Test include-merge-commits option
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+        with:
+          owner: actions
+          repo: checkout
+          basehead: v3.0.0...v3.1.0
+          token: ${{ secrets.GITHUB_TOKEN }}
+          include-merge-commits: "true"
+      - name: Assert differences output is non-empty with merge commits included
+        env:
+          ACTUAL: ${{ steps.action.outputs.differences }}
+        run: |
+          echo "actual: $ACTUAL"
+          if [ -z "$ACTUAL" ]; then
+            echo "FAIL: expected non-empty differences output"
+            exit 1
+          fi
+          echo "PASS: got differences output with merge commits included"

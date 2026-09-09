@@ -1,0 +1,8 @@
+dist/
+lib/
+node_modules/
+.pre-commit-config.yaml
+CHANGELOG.md
+.direnv
+.git
+flake.lock

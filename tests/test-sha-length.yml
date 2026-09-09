@@ -1,0 +1,33 @@
+name: Test custom sha-length option
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+        with:
+          owner: actions
+          repo: checkout
+          basehead: v3.0.0...v3.1.0
+          token: ${{ secrets.GITHUB_TOKEN }}
+          sha-length: "12"
+      - name: Assert differences output is non-empty and contains 12-char SHAs
+        env:
+          ACTUAL: ${{ steps.action.outputs.differences }}
+        run: |
+          echo "actual: $ACTUAL"
+          if [ -z "$ACTUAL" ]; then
+            echo "FAIL: expected non-empty differences output"
+            exit 1
+          fi
+          # The markdown table should contain SHA strings of length 12
+          # SHAs appear as hex strings in the table; check that a 12-char hex sequence is present
+          if echo "$ACTUAL" | grep -qE '[0-9a-f]{12}'; then
+            echo "PASS: output contains 12-character SHA"
+          else
+            echo "FAIL: output does not appear to contain 12-character SHAs"
+            exit 1
+          fi
